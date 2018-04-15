@@ -22,7 +22,17 @@ tableInsertTest[4] = 4
 table.insert(tableInsertTest, 3)
 
 -- Access table values
-message = tableInsertTest[5]
+message = testScores[1]
+
+-- Table iteration. i = index, s = value
+for i,s in ipairs(testScores) do
+    message = message + s
+end
+
+-- Table properties
+testScores.subject = "history"
+
+message = testScores.subject
 
 function love.draw()
     love.graphics.setFont(love.graphics.newFont(50))
