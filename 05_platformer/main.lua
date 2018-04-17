@@ -15,6 +15,7 @@ end
 
 function love.load()
     love.window.setMode(900,700)
+    love.graphics.setBackgroundColor(0.5, 0.8, 1)
 
     -- Gravity x, gravity y, let objects "sleep"
     world = love.physics.newWorld(0, 500, false)
@@ -29,6 +30,8 @@ function love.load()
     require("coin")
     anim8 = require("anim8/anim8")
     sti = require("tiled/sti")
+    local cameraFile = require("hump/camera")
+    camera = cameraFile()
 
     platforms = {}
 
@@ -41,24 +44,59 @@ function love.load()
     for i, obj in pairs(gameMap.layers["Coins"].objects) do
         spawnCoin(obj.x, obj.y)
     end
+
+    font = love.graphics.newFont(30)
+
+    gameState = 1
+    timer = 0
 end
 
 function love.update(dt)
-    world:update(dt)
+    if gameState == 2 then
+        world:update(dt)
+        playerUpdate(dt)
+        gameMap:update(dt)
+        coinUpdate(dt)
+        timer = timer + dt
+    end
+    camera:lookAt(player.body:getX(), love.graphics.getHeight()/2)
 
-    playerUpdate(dt)
-    gameMap:update(dt)
-    coinUpdate(dt)
+    if #coins == 0 and gameState == 2 then
+        gameState = 1
+        player.body:setPosition(198, 443)
+
+        for i, obj in pairs(gameMap.layers["Coins"].objects) do
+            spawnCoin(obj.x, obj.y)
+        end
+    end
+
+    if player.body:getY() > love.graphics.getHeight() then
+        player.body:setPosition(198, 443)
+    end
 end
 
 function love.draw()
+    camera:attach()
     gameMap:drawLayer(gameMap.layers["TileLayer1"])
     playerDraw()
     coinDraw()
+    camera:detach()
+
+    if gameState == 1 then
+        love.graphics.setFont(font)
+        love.graphics.printf("Press any key to begin!", 0, 50, love.graphics.getWidth(), "center")
+    end
+
+    love.graphics.print("Time: ".. math.floor(timer), 10, 660)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-   playerJump(key)
+    playerJump(key)
+
+    if gameState == 1 then
+        gameState = 2
+        timer = 0
+    end
 end
 
 function beginContact(a, b, coll)
