@@ -2,5 +2,8 @@
 	path = 05_platformer/anim8
 	url = git@github.com:kikito/anim8.git
 [submodule "tiled"]
-	path = tiled
+	path = 05_platformer/tiled
 	url = https://github.com/karai17/Simple-Tiled-Implementation
+[submodule "05_platformer/hump"]
+	path = 05_platformer/hump
+	url = https://github.com/vrld/hump

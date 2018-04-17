@@ -9,6 +9,10 @@ function spawnPlatform(x, y, w, h)
     table.insert(platforms, platform)
 end
 
+function distanceBetween(x1, y1, x2, y2)
+    return math.sqrt((x1 - x2)^2 + (y1 - y2)^2)
+end
+
 function love.load()
     love.window.setMode(900,700)
 
@@ -24,28 +28,32 @@ function love.load()
     require("player")
     require("coin")
     anim8 = require("anim8/anim8")
+    sti = require("tiled/sti")
 
     platforms = {}
 
-    spawnPlatform(50, 400, 300, 30)
-    spawnCoin(200, 100)
+    gameMap = sti("maps/map.lua")
+
+    for i, obj in pairs(gameMap.layers["Platforms"].objects) do
+        spawnPlatform(obj.x, obj.y, obj.width, obj.height)
+    end
+
+    for i, obj in pairs(gameMap.layers["Coins"].objects) do
+        spawnCoin(obj.x, obj.y)
+    end
 end
 
 function love.update(dt)
     world:update(dt)
 
     playerUpdate(dt)
-
+    gameMap:update(dt)
     coinUpdate(dt)
 end
 
 function love.draw()
+    gameMap:drawLayer(gameMap.layers["TileLayer1"])
     playerDraw()
-
-    for i,p in ipairs(platforms) do
-        love.graphics.rectangle("fill", p.body:getX(), p.body:getY(), p.w, p.h)
-    end
-
     coinDraw()
 end
 

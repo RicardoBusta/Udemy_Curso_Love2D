@@ -33,6 +33,6 @@ end
 
 function playerJump(key)
     if key == "w" and player.grounded then
-        player.body:applyLinearImpulse(0, -2500)
+        player.body:applyLinearImpulse(0, -2800)
     end
 end
