@@ -10,6 +10,8 @@ function spawnPlatform(x, y, w, h)
 end
 
 function love.load()
+    love.window.setMode(900,700)
+
     -- Gravity x, gravity y, let objects "sleep"
     world = love.physics.newWorld(0, 500, false)
     world:setCallbacks(beginContact, endContact, preSolve, postSolve)
@@ -20,16 +22,21 @@ function love.load()
     sprites.player_stand = love.graphics.newImage("sprites/player_stand.png")
 
     require("player")
+    require("coin")
+    anim8 = require("anim8/anim8")
 
     platforms = {}
 
     spawnPlatform(50, 400, 300, 30)
+    spawnCoin(200, 100)
 end
 
 function love.update(dt)
     world:update(dt)
 
     playerUpdate(dt)
+
+    coinUpdate(dt)
 end
 
 function love.draw()
@@ -38,6 +45,8 @@ function love.draw()
     for i,p in ipairs(platforms) do
         love.graphics.rectangle("fill", p.body:getX(), p.body:getY(), p.w, p.h)
     end
+
+    coinDraw()
 end
 
 function love.keypressed(key, scancode, isrepeat)
